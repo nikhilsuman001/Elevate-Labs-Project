@@ -1,5 +1,5 @@
 # Elevate-Labs-Project
-<br>
+
 ## Steganography Tool for Image/File Hiding
 
 This project hides secret text messages inside PNG images using Least Significant Bit (LSB) encoding.
