@@ -1,0 +1,58 @@
+import tkinter as tk
+from tkinter import filedialog, messagebox
+from stego import encode, decode
+
+class StegoApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Steganography Tool - LSB Encoder/Decoder")
+        self.img_path = None
+        self.build_ui()
+
+    def build_ui(self):
+        frm = tk.Frame(self.root, padx=10, pady=10)
+        frm.pack()
+        tk.Button(frm, text="Open Image", command=self.open_image).grid(row=0, column=0)
+        self.lbl = tk.Label(frm, text="No image selected")
+        self.lbl.grid(row=0, column=1)
+        tk.Label(frm, text="Secret Message:").grid(row=1, column=0)
+        self.text = tk.Text(frm, width=40, height=4)
+        self.text.grid(row=1, column=1)
+        tk.Button(frm, text="Encode & Save", command=self.encode_image).grid(row=2, column=0)
+        tk.Button(frm, text="Decode Message", command=self.decode_image).grid(row=2, column=1)
+
+    def open_image(self):
+        p = filedialog.askopenfilename(filetypes=[("PNG Images", "*.png")])
+        if p:
+            self.img_path = p
+            self.lbl.config(text=p)
+
+    def encode_image(self):
+        if not self.img_path:
+            messagebox.showwarning("Warning", "Please open an image first.")
+            return
+        msg = self.text.get("1.0", "end").strip()
+        if not msg:
+            messagebox.showwarning("Warning", "Please enter a message.")
+            return
+        out = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG Image", "*.png")])
+        if out:
+            try:
+                encode(self.img_path, msg, out)
+                messagebox.showinfo("Success", f"Message encoded in {out}")
+            except Exception as e:
+                messagebox.showerror("Error", str(e))
+
+    def decode_image(self):
+        if not self.img_path:
+            messagebox.showwarning("Warning", "Please open an image first.")
+            return
+        try:
+            decode(self.img_path)
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = StegoApp(root)
+    root.mainloop()
